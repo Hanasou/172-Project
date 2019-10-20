@@ -3,7 +3,7 @@ import os
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = '1'
 os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = '1'
 from project import app, db, file_storage, my_bucket, s3
-from flask import render_template, request, Response, session, redirect, url_for
+from flask import render_template, request, Response, session, redirect, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from project.forms import SignUpForm, LoginForm
 from project.models import User, File
@@ -77,17 +77,23 @@ def download_file():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    file = request.files['file']
-    my_bucket.Object(file.filename).put(Body = file)
+    try:
+        file = request.files['file']
 
-    now = datetime.datetime.now()
-    f = '%Y-%m-%d %H:%M:%S'
-    now = now.strftime(f)
-    add_file = File(item = file.filename, user_fn = current_user.first_name, user_ln = current_user.last_name, upload_date = now, update_date = now, 
-        description = '', user_id = current_user.id)
-    db.session.add(add_file)
-    db.session.commit()
-    return redirect(url_for('index'))
+        my_bucket.Object(file.filename).put(Body = file)
+
+        now = datetime.datetime.now()
+        f = '%Y-%m-%d %H:%M:%S'
+        now = now.strftime(f)
+        add_file = File(item = file.filename, user_fn = current_user.first_name, user_ln = current_user.last_name, upload_date = now, update_date = now, 
+            description = '', user_id = current_user.id)
+        db.session.add(add_file)
+        db.session.commit()
+
+        return redirect(url_for('index'))
+    except:
+
+        return redirect(url_for('index'))
 
 @app.route('/update', methods=['POST'])
 def update_file():
