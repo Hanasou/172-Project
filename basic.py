@@ -102,10 +102,10 @@ def update_file():
 @app.route('/delete', methods=['POST'])
 def delete_file():
     key = request.form['key']
-    my_bucket.Object(key).delete()
-    delete_file = File.query.filter_by(item = key)
+    delete_file = File.query.filter_by(item = key).first()
     db.session.delete(delete_file)
     db.session.commit()
+    my_bucket.Object(key).delete()
     return redirect(url_for('index'))
 
 @app.route('/')
