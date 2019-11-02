@@ -25,8 +25,8 @@ blueprint = make_google_blueprint(
 )
 app.register_blueprint(blueprint, url_prefix="/login")
 """
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://roy_zhang:roguewarriors@filedb.cfycziqebscv.us-west-1.rds.amazonaws.com:3306/fileapp' # Database endpoint. Switch to RDS later. Test on local db first.
+DB_CONSTANT = None
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONSTANT # Database endpoint. Put the endpoint in an env variable.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
